@@ -3,17 +3,13 @@
 from public import F_distance,F_mating,P_generator_SL_optimization,F_EnvironmentSelect
 
 from Private_function import *
+from cuda_test import *
 
 from public import NDsort
 import time
 import matplotlib.pyplot as plt
 import cupy as np
 import numpy,argparse
-
-
-
-
-
 
 def EA_Run(Generations, PopSize, HiddenNum, Algorithm, args):
 
@@ -90,16 +86,11 @@ def EA_Run(Generations, PopSize, HiddenNum, Algorithm, args):
     plt.ioff()
     plt.show()
 
-
-
-
-
-
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='GEMONN setting')
 
+    parser.add_argument('--test', action='store_true', default=False, help='Test torch with cuda and exit.')
     parser.add_argument('--Generations',type=int,default=500,help='The maximal iteration of the algorithm')
     parser.add_argument('--Popsize',type=int,default=50,help='The population size')
 
@@ -110,11 +101,10 @@ if __name__ == "__main__":
     parser.add_argument('--save', action='store_true', default=True)
     parser.add_argument('--save_dir', type=str, default='./result')
 
-
-
     args = parser.parse_args()
-    create_dir(args.save_dir)
 
-
-
-    EA_Run(args.Generations, args.Popsize, args.HiddenNum, args.Algorithm,args)
+    if args.test:
+        cudaTest()
+    else:
+        create_dir(args.save_dir)
+        EA_Run(args.Generations, args.Popsize, args.HiddenNum, args.Algorithm,args)
