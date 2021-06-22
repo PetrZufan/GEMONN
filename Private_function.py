@@ -216,7 +216,8 @@ class LeNet5(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
-def Initialization_Pop(PopSize, Model):
+
+def Initialization_pop(PopSize, Model):
     Dim = 0
     SizeInform = []
     LengthInform = []
@@ -309,7 +310,7 @@ if __name__ == '__main__':
 
     Parameter_dict = Model.state_dict()
 
-    Population, Boundary, Coding, SizeInform, LengthInform = Initialization_Pop(PopSize = 10, Model = Model)
+    Population, Boundary, Coding, SizeInform, LengthInform = Initialization_pop(PopSize = 10, Model = Model)
 
     Parameter_dict_i = Pop2weights(Population[0], SizeInform, LengthInform, Parameter_dict)
 
