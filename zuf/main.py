@@ -53,5 +53,5 @@ if __name__ == '__main__':
 
     population = Population(pop_size=10, model=model)
     qiea = QIEA(population)
-    best = qiea.run(10)
+    best, all_data = qiea.run(10)
     print(best)
