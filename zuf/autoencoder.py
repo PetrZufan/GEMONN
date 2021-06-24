@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class AutoEncoder(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -19,7 +20,7 @@ class AutoEncoder(nn.Module):
 
     def set_weights(self, encode_weights, encode_biases):
         state_dict = self.state_dict()
-        # state_dict['encode_func.weight'] = torch.ones([784, 10], dtype=torch.float32, device="cuda")
+        # state_dict['encode_func.weight'] = torch.ones([784, 10], dtype=torch.float32, device=device)
         state_dict['encode_func.weight'] = torch.from_numpy(encode_weights)
         state_dict['encode_func.bias'] = torch.from_numpy(encode_biases)
         state_dict['decode_func.weight'] = torch.from_numpy(encode_weights).t()
@@ -40,6 +41,6 @@ class AutoEncoder(nn.Module):
         # data_iter = iter(data_loader)
         # images, labels = data_iter.next()
         for _, (images, labels) in enumerate(data_loader):
-            images = images.view(-1, data_size).cuda()
-            # labels = labels.cuda()
+            images = images.view(-1, data_size).to(device)
+            # labels = labels.to(device)
             return images, self(images)

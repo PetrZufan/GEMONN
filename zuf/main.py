@@ -9,6 +9,9 @@ from ea.qiea import *
 from autoencoder import *
 
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+
 def load_data(batch_size=-1):
     train_data = datasets.MNIST(
         root="data/",
@@ -43,15 +46,12 @@ def load_data(batch_size=-1):
 
 if __name__ == '__main__':
 
-    hidden_size = 20
-    data_size, train_loader, test_loader = load_data()
-    model = AutoEncoder(data_size, hidden_size, data_size).cuda()
+    hidden_size = 10
+    data_size, train_loader, test_loader = load_data(batch_size=64)
+    model = AutoEncoder(data_size, hidden_size, data_size).to(device)
     model.set_data(train_loader, data_size)
 
     population = Population(pop_size=10, model=model)
     qiea = QIEA(population)
     best = qiea.run(10)
     print(best)
-    exit()
-
-    train(model, train_loader, data_size)

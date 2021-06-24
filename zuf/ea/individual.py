@@ -2,6 +2,7 @@
 import numpy as np
 import torch
 
+
 class QbitGene:
     """
     List of Q-Bits.
@@ -17,9 +18,9 @@ class QbitGene:
     def collapse(self, bound=1):
         pick = np.random.uniform(0, 1, self.bit_len)
         self.collapsed = np.where(pick >= (self.alphas ** 2), 1, 0)
-        return self.collapsed, self.toValue(bound)
+        return self.collapsed, self.to_value(bound)
 
-    def toValue(self, bound=1):
+    def to_value(self, bound=1):
         base = np.array([2 ** l for l in range(self.bit_len)])
         dec_value = np.dot(self.collapsed, base)
         self.value = -bound + dec_value / ((2 ** self.bit_len) - 1) * 2 * bound
@@ -84,7 +85,7 @@ class QbitChromosome:
 
     def collapse(self, bound=1):
         self.collapsed = np.array([gene.collapse() for gene in self.genes])
-        self.values = np.array([gene.toValue(bound) for gene in self.genes])
+        self.values = np.array([gene.to_value(bound) for gene in self.genes])
         return self.collapsed, self.values
 
     def update(self):
@@ -126,6 +127,7 @@ class Individual:
         )
 
         loss = self.model.trainx()
+        self.fitness = loss
         return loss
 
     def proceed(self):
