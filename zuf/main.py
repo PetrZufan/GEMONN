@@ -2,7 +2,9 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
-#from torchvision.transforms import ToTensor, Lambda, Compose
+
+from ea.population import *
+from ea.qiea import *
 
 from autoencoder import *
 
@@ -40,6 +42,13 @@ def load_data(batch_size=-1):
 
 
 if __name__ == '__main__':
+
+    population = Population(pop_size=10)
+    qiea = QIEA(population)
+    best = qiea.run(10)
+    print(best)
+    exit()
+
     hidden_size = 20
 
     data_size, train_loader, test_loader = load_data()
