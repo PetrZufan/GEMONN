@@ -54,4 +54,5 @@ if __name__ == '__main__':
     population = Population(pop_size=10, model=model)
     qiea = QIEA(population)
     best, all_data = qiea.run(10)
+    all_data.to_file("./alldata/alldata.pkl")
     print(best)
