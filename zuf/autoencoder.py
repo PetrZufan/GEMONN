@@ -3,6 +3,7 @@ import torch.nn as nn
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+
 class AutoEncoder(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super(AutoEncoder, self).__init__()
@@ -28,7 +29,8 @@ class AutoEncoder(nn.Module):
     def get_weights(self):
         return self.encode_func.weight, self.encode_func.bias
 
-    def trainx(self):
+    def evaluate(self):
+        self.eval()
         with torch.no_grad():
             return self.loss(self.data_loader, self.data_size)
 

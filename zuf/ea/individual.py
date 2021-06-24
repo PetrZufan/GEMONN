@@ -126,7 +126,7 @@ class Individual:
             self.bias_chrom.values
         )
 
-        loss = self.model.trainx()
+        loss = self.model.evaluate()
         self.fitness = loss
         return loss
 
