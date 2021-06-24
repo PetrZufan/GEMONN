@@ -46,13 +46,16 @@ def load_data(batch_size=-1):
 
 if __name__ == '__main__':
 
-    hidden_size = 10
+    hidden_layer_size = 10
+    population_size = 10
+    max_generation = 10
+
     data_size, train_loader, test_loader = load_data(batch_size=64)
-    model = AutoEncoder(data_size, hidden_size, data_size).to(device)
+    model = AutoEncoder(data_size, hidden_layer_size, data_size).to(device)
     model.set_data(train_loader, data_size)
 
-    population = Population(pop_size=10, model=model)
+    population = Population(pop_size=population_size, model=model)
     qiea = QIEA(population)
-    best, all_data = qiea.run(10)
+    best, all_data = qiea.run(max_generation)
     all_data.to_file("./alldata/alldata.pkl")
     print(best)
