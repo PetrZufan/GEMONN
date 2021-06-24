@@ -84,7 +84,7 @@ class QbitChromosome:
         self.collapsed, self.values = self.collapse()
 
     def collapse(self, bound=1):
-        self.collapsed = np.array([gene.collapse() for gene in self.genes])
+        self.collapsed = np.array([gene.collapse()[0] for gene in self.genes])
         self.values = np.array([gene.to_value(bound) for gene in self.genes])
         return self.collapsed, self.values
 
