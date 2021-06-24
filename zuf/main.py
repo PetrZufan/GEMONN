@@ -43,15 +43,15 @@ def load_data(batch_size=-1):
 
 if __name__ == '__main__':
 
-    population = Population(pop_size=10)
+    hidden_size = 20
+    data_size, train_loader, test_loader = load_data()
+    model = AutoEncoder(data_size, hidden_size, data_size).cuda()
+    model.set_data(train_loader, data_size)
+
+    population = Population(pop_size=10, model=model)
     qiea = QIEA(population)
     best = qiea.run(10)
     print(best)
     exit()
 
-    hidden_size = 20
-
-    data_size, train_loader, test_loader = load_data()
-    model = AutoEncoder(data_size, hidden_size, data_size).cuda()
-    print(model)
     train(model, train_loader, data_size)

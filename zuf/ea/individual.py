@@ -1,6 +1,6 @@
 
 import numpy as np
-
+import torch
 
 class QbitGene:
     """
@@ -73,7 +73,7 @@ class QbitChromosome:
         List of QbitsGenes.
         Represents list of parameters.
         """
-    def __init__(self, chromosome_len=2, bit_len=10):
+    def __init__(self, chromosome_len, bit_len=10):
         self.chromosome_len = chromosome_len
         self.bit_len = bit_len
         self.genes = np.array([QbitGene(bit_len) for _ in np.arange(chromosome_len)])
@@ -103,20 +103,30 @@ class QbitChromosome:
 
 
 class Individual:
-    def __init__(self, chromosome):
+    def __init__(self, model):
         """
         Args:
         chromosome: QbitChromosome
         """
-        self.chromosome = chromosome
+        self.model = model
+        w, b = model.get_weights()
+        self.weight_chrom = QbitChromosome(w.shape[0]*w.shape[1])
+        self.bias_chrom = QbitChromosome(b.shape[0])
+        self.chromosomes = [self.weight_chrom, self.bias_chrom]
         self.fitness = float('inf')
 
     def collapse(self, bound=1):
-        return self.chromosome.collapse(bound)
+        return [chrom.collapse(bound) for chrom in self.chromosomes]
 
-    def calc_fitness(self, ):
-        self.fitness = abs(self.chromosome.values[0] - self.chromosome.values[1])
-        return self.fitness
+    def calc_fitness(self):
+        w, b = self.model.get_weights()
+        self.model.set_weights(
+            self.weight_chrom.values.reshape(w.shape[0], w.shape[1]),
+            self.bias_chrom.values
+        )
+
+        loss = self.model.trainx()
+        return loss
 
     def proceed(self):
         self.collapse()
@@ -124,9 +134,11 @@ class Individual:
 
     def rotation(self, best_individual):
         fitness_flag = self.fitness > best_individual.fitness
-        self.chromosome.rotation(best_individual.chromosome, fitness_flag)
+        for i, _ in enumerate(self.chromosomes):
+            self.chromosomes[i].rotation(best_individual.chromosomes[i], fitness_flag)
         self.proceed()
 
     def mutation(self):
-        self.chromosome.mutation()
+        for chrom in self.chromosomes:
+            chrom.mutation()
         self.proceed()

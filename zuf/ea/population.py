@@ -3,16 +3,15 @@ from .individual import *
 
 
 class Population:
-    def __init__(self, pop_size=200, chromosome_len=2):
+    def __init__(self, model, pop_size=200):
         self.pop_size = pop_size
-        self.chromosome_len = chromosome_len
+        self.model = model
         self.population = []
         self.generate_pop()
 
     def generate_pop(self):
         for _ in np.arange(self.pop_size):
-            chromosome = QbitChromosome(self.chromosome_len)
-            indv = Individual(chromosome)
+            indv = Individual(self.model)
             indv.proceed()
             self.population.append(indv)
         return self.population
