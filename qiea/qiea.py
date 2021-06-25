@@ -1,6 +1,6 @@
 
-from zuf.qiea.population import *
-from zuf.alldata import AllData
+from qiea.population import *
+from alldata import AllData
 import copy
 
 

@@ -75,4 +75,4 @@ if __name__ == '__main__':
     qiea = QIEA(population)
     best, all_data = qiea.run(max_generation)
     all_data.to_file(file)
-    print(best)
+    # print(best)

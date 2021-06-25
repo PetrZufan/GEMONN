@@ -1,5 +1,5 @@
 
-from zuf.qiea.individual.binary import *
+from qiea.individual.binary import *
 
 
 class Population:
