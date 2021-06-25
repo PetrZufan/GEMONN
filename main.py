@@ -13,10 +13,10 @@ from qiea.individual.binary import Individual as BinIndv
 
 from ea.population import Population as CPopulation
 from ea.ea import EA
-from ea.individual.real import Individual as ClasicIndv
+from ea.individual.real import Individual as ClassicIndv
 
 from autoencoder import *
-
+from stats import Stats
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -61,9 +61,9 @@ if __name__ == '__main__':
     parser.add_argument('--pop', type=int, default=4, help='The population size')
     parser.add_argument('--child', type=int, default=8, help='The children count')
     parser.add_argument('--hid', type=int, default=300, help='The number of hidden units of an auto-encoder')
-    parser.add_argument('--indv', type=str, default="real", help='Type of individual encoding. Values: real, bin, clasic')
+    parser.add_argument('--indv', type=str, default="real", help='Type of individual encoding. Values: real, bin, classic')
     parser.add_argument('--svpath', type=str, default='./alldata/')
-    parser.add_argument('--svfile', type=str, default='alldata_' + str(pid) + '.pkl')
+    parser.add_argument('--svfile', type=str, default='alldata_' + str(pid))
 
     args = parser.parse_args()
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     individual_type = \
         BinIndv if (args.indv == 'bin') else (
         RealIndv if (args.indv == 'real') else (
-        ClasicIndv
+        ClassicIndv
     ))
     file = args.svpath + args.svfile
 
@@ -82,15 +82,19 @@ if __name__ == '__main__':
     model = AutoEncoder(data_size, hidden_layer_size, data_size).to(device)
     model.set_data(train_loader, data_size)
 
-    if individual_type == ClasicIndv:
+    if individual_type == ClassicIndv:
         population = CPopulation(pop_size=population_size, model=model, individual_type=individual_type)
         ea = EA(population, children_size)
         best, all_data = ea.run(max_generation, file)
-        all_data.to_file(file)
+        #all_data.to_file(file)
     else:
         population = QPopulation(pop_size=population_size, model=model, individual_type=individual_type)
         qiea = QIEA(population, children_size)
         best, all_data = qiea.run(max_generation, file)
-        all_data.to_file(file)
+        #all_data.to_file(file)
+
+    all_data.fitness_to_file(file + '.txt')
+    #stats = Stats(all_data)
+    #stats.conv(file + '.png', "title", xlim=10)
 
     # print(best)

@@ -2,6 +2,8 @@
 import pickle
 from pathlib import Path
 
+import numpy as np
+
 
 class AllData:
     def __init__(self):
@@ -21,13 +23,25 @@ class AllData:
     def from_file(self, filename):
         with open(filename, 'rb') as file:
             self.populations = pickle.load(file)
+        return self
+
+    def fitness_to_file(self, filename):
+        bests = [population.find_best() for population in self.populations]
+        bests = np.array([[i, value] for i, (_, value, _) in enumerate(bests)])
+        x = bests[:, 0]
+        y = bests[:, 1]
+
+        Path(filename).parent.mkdir(parents=True, exist_ok=True)
+        with open(filename, 'w') as file:
+            for i, fit in bests:
+                file.write(str(i)+','+str(fit)+'\n')
 
 
 if __name__ == "__main__":
     import torch
-    from zuf.autoencoder import AutoEncoder
-    from zuf.qiea.population import Population
-    from zuf.main import load_data
+    from autoencoder import AutoEncoder
+    from qiea.population import Population
+    from main import load_data
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
 

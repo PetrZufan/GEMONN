@@ -21,8 +21,6 @@ class EA:
         self.all_data.put(copy.deepcopy(self.population))
 
         for generation in np.arange(generation_num):
-            # Print some statistics
-            #if i % 10 == 0:
             print('Best Fitness:', round(best_fitness, 5))
 
             # Mutation
@@ -30,16 +28,15 @@ class EA:
 
             new_individual, new_fitness, _ = self.population.find_best()
             if new_fitness > best_fitness:
-                _, _, worst_index = self.population.find_worst()
-                self.population.set(worst_index, best_individual)
+                pass
             else:
                 best_fitness = new_fitness
                 best_individual = new_individual
 
             self.all_data.put(copy.deepcopy(self.population))
-            if generation % 5 == 0:
-                self.all_data.to_file(all_data_file)
+            # if generation % 5 == 0:
+                # self.all_data.to_file(all_data_file)
         return best_individual, self.all_data
 
-    def mutation(self, coef=0.1):
+    def mutation(self, coef=1.0):
         self.population.mutation(coef, self.children_count)
