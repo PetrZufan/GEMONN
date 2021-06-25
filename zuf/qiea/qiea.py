@@ -1,5 +1,5 @@
 
-from zuf.ea.population import *
+from zuf.qiea.population import *
 from zuf.alldata import AllData
 import copy
 
@@ -19,13 +19,13 @@ class QIEA:
         best_individual, best_fitness, _ = self.population.find_best()
         self.all_data.put(copy.deepcopy(self.population))
 
-        for i in np.arange(generation_num):
+        for generation in np.arange(generation_num):
             # Print some statistics
             #if i % 10 == 0:
             print('Best Fitness:', round(best_fitness, 5))
 
             # Quantum Rotation Gate
-            self.rotation(best_individual)
+            self.rotation(best_individual, generation)
 
             # Mutation
             self.mutation()
@@ -41,8 +41,8 @@ class QIEA:
             self.all_data.put(copy.deepcopy(self.population))
         return best_individual, self.all_data
 
-    def rotation(self, best_individual):
-        self.population.rotation(best_individual)
+    def rotation(self, best_individual, generation):
+        self.population.rotation(best_individual, generation)
 
     def mutation(self, ratio=0.05):
         self.population.mutation(ratio)

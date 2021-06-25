@@ -26,7 +26,7 @@ class AllData:
 if __name__ == "__main__":
     import torch
     from zuf.autoencoder import AutoEncoder
-    from zuf.ea.population import Population
+    from zuf.qiea.population import Population
     from zuf.main import load_data
 
     device = "cuda" if torch.cuda.is_available() else "cpu"

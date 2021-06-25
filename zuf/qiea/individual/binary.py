@@ -15,12 +15,12 @@ class QbitGene:
         self.betas = np.cos(self.degrees)
         self.collapsed, self.value = self.collapse()
 
-    def collapse(self, bound=1):
+    def collapse(self, bound=10):
         pick = np.random.uniform(0, 1, self.bit_len)
         self.collapsed = np.where(pick >= (self.alphas ** 2), 1, 0)
         return self.collapsed, self.to_value(bound)
 
-    def to_value(self, bound=1):
+    def to_value(self, bound=10):
         base = np.array([2 ** l for l in range(self.bit_len)])
         dec_value = np.dot(self.collapsed, base)
         self.value = -bound + dec_value / ((2 ** self.bit_len) - 1) * 2 * bound
@@ -83,7 +83,7 @@ class QbitChromosome:
         # In that case, call self.update() first.
         self.collapsed, self.values = self.collapse()
 
-    def collapse(self, bound=1):
+    def collapse(self, bound=10):
         self.collapsed = np.array([gene.collapse()[0] for gene in self.genes])
         self.values = np.array([gene.to_value(bound) for gene in self.genes])
         return self.collapsed, self.values
@@ -116,7 +116,7 @@ class Individual:
         self.chromosomes = [self.weight_chrom, self.bias_chrom]
         self.fitness = float('inf')
 
-    def collapse(self, bound=1):
+    def collapse(self, bound=10):
         return [chrom.collapse(bound) for chrom in self.chromosomes]
 
     def calc_fitness(self):
@@ -134,7 +134,7 @@ class Individual:
         self.collapse()
         self.calc_fitness()
 
-    def rotation(self, best_individual):
+    def rotation(self, best_individual, generation):
         fitness_flag = self.fitness > best_individual.fitness
         for i, _ in enumerate(self.chromosomes):
             self.chromosomes[i].rotation(best_individual.chromosomes[i], fitness_flag)

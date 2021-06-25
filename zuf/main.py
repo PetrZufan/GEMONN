@@ -3,8 +3,10 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
-from ea.population import *
-from ea.qiea import *
+from qiea.population import *
+from qiea.qiea import *
+from qiea.individual.real import Individual as RealIndv
+from qiea.individual.binary import Individual as BinIndv
 
 from autoencoder import *
 
@@ -49,12 +51,13 @@ if __name__ == '__main__':
     hidden_layer_size = 10
     population_size = 10
     max_generation = 10
+    individual_type = BinIndv
 
     data_size, train_loader, test_loader = load_data(batch_size=64)
     model = AutoEncoder(data_size, hidden_layer_size, data_size).to(device)
     model.set_data(train_loader, data_size)
 
-    population = Population(pop_size=population_size, model=model)
+    population = Population(pop_size=population_size, model=model, individual_type=individual_type)
     qiea = QIEA(population)
     best, all_data = qiea.run(max_generation)
     all_data.to_file("./alldata/alldata.pkl")

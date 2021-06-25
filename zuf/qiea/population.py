@@ -1,17 +1,17 @@
 
-from .individual import *
+from zuf.qiea.individual.binary import *
 
 
 class Population:
-    def __init__(self, model, pop_size=200):
+    def __init__(self, model, individual_type, pop_size=200):
         self.pop_size = pop_size
         self.model = model
         self.population = []
-        self.generate_pop()
+        self.generate_pop(individual_type)
 
-    def generate_pop(self):
+    def generate_pop(self, individual_type):
         for _ in np.arange(self.pop_size):
-            indv = Individual(self.model)
+            indv = individual_type(self.model)
             indv.proceed()
             self.population.append(indv)
         return self.population
@@ -32,9 +32,9 @@ class Population:
         for indv in self.population:
             indv.proceed()
 
-    def rotation(self, best_individual):
+    def rotation(self, best_individual, generation):
         for indv in self.population:
-            indv.rotation(best_individual)
+            indv.rotation(best_individual, generation)
 
     def mutation(self, ratio):
         num = int(self.pop_size * ratio)
