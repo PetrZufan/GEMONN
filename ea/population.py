@@ -1,5 +1,6 @@
-import numpy as np
 
+import copy
+import numpy as np
 from ea.individual.real import *
 
 
@@ -30,13 +31,13 @@ class Population:
         return self.population[max_index], max_value, max_index
 
     def select(self, child_count):
-        return np.random.choice(self.population, self.pop_size)
+        return np.array([copy.deepcopy(indv) for indv in np.random.choice(self.population, child_count)])
 
     def mutation(self, coef, child_count):
         children = self.select(child_count)
         for child in children:
             child.mutation(coef)
-        np.append(children, self.population)
+        children = np.append(children, self.population)
         children.sort()
         self.population = children[:self.pop_size]
 
