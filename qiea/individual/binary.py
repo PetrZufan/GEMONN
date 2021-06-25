@@ -8,7 +8,7 @@ class QbitGene:
     List of Q-Bits.
     Represents one parameter.
     """
-    def __init__(self, bit_len=10):
+    def __init__(self, bit_len=5):
         self.bit_len = bit_len
         self.degrees = np.pi/4 * np.ones(bit_len)
         self.alphas = np.sin(self.degrees)
@@ -74,7 +74,7 @@ class QbitChromosome:
         List of QbitsGenes.
         Represents list of parameters.
         """
-    def __init__(self, chromosome_len, bit_len=10):
+    def __init__(self, chromosome_len, bit_len=5):
         self.chromosome_len = chromosome_len
         self.bit_len = bit_len
         self.genes = np.array([QbitGene(bit_len) for _ in np.arange(chromosome_len)])
