@@ -1,3 +1,6 @@
+import argparse
+import os
+
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -47,11 +50,22 @@ def load_data(batch_size=-1):
 
 
 if __name__ == '__main__':
+    pid = os.getpid()
 
-    hidden_layer_size = 10
-    population_size = 10
-    max_generation = 10
-    individual_type = BinIndv
+    parser = argparse.ArgumentParser(description='QIEA')
+    parser.add_argument('--gen', type=int, default=500, help='The maximal iteration of the algorithm')
+    parser.add_argument('--pop', type=int, default=50, help='The population size')
+    parser.add_argument('--hid', type=int, default=500, help='The number of hidden units of an auto-encoder')
+    parser.add_argument('--indv', type=str, default="real", help='Type of individual encoding. Values: \"real\", \"bin\"')
+    parser.add_argument('--save', type=str, default='./alldata/alldata_' + str(pid) + '.pkl')
+
+    args = parser.parse_args()
+
+    hidden_layer_size = args.hid
+    population_size = args.pop
+    max_generation = args.gen
+    individual_type = BinIndv if (args.indv == 'bin') else RealIndv
+    file = args.save
 
     data_size, train_loader, test_loader = load_data(batch_size=64)
     model = AutoEncoder(data_size, hidden_layer_size, data_size).to(device)
@@ -60,5 +74,5 @@ if __name__ == '__main__':
     population = Population(pop_size=population_size, model=model, individual_type=individual_type)
     qiea = QIEA(population)
     best, all_data = qiea.run(max_generation)
-    all_data.to_file("./alldata/alldata.pkl")
+    all_data.to_file(file)
     print(best)
