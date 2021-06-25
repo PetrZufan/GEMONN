@@ -14,7 +14,7 @@ class QIEA:
 #        self.population = Population(pop_size, chromosome_len).generate_pop()
 #        self.pop_size = pop_size
 
-    def run(self, generation_num=1):
+    def run(self, generation_num=1, all_data_file="alldata.pkl"):
         # Keep the best individual
         best_individual, best_fitness, _ = self.population.find_best()
         self.all_data.put(copy.deepcopy(self.population))
@@ -39,6 +39,8 @@ class QIEA:
                 best_individual = new_individual
 
             self.all_data.put(copy.deepcopy(self.population))
+            if generation % 5 == 0:
+                self.all_data.to_file(all_data_file)
         return best_individual, self.all_data
 
     def rotation(self, best_individual, generation):

@@ -74,6 +74,6 @@ if __name__ == '__main__':
 
     population = Population(pop_size=population_size, model=model, individual_type=individual_type)
     qiea = QIEA(population)
-    best, all_data = qiea.run(max_generation)
+    best, all_data = qiea.run(max_generation, file)
     all_data.to_file(file)
     # print(best)
