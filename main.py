@@ -57,7 +57,8 @@ if __name__ == '__main__':
     parser.add_argument('--pop', type=int, default=50, help='The population size')
     parser.add_argument('--hid', type=int, default=300, help='The number of hidden units of an auto-encoder')
     parser.add_argument('--indv', type=str, default="real", help='Type of individual encoding. Values: \"real\", \"bin\"')
-    parser.add_argument('--save', type=str, default='./alldata/alldata_' + str(pid) + '.pkl')
+    parser.add_argument('--svpath', type=str, default='./alldata/')
+    parser.add_argument('--svfile', type=str, default='alldata_' + str(pid) + '.pkl')
 
     args = parser.parse_args()
 
@@ -65,7 +66,7 @@ if __name__ == '__main__':
     population_size = args.pop
     max_generation = args.gen
     individual_type = BinIndv if (args.indv == 'bin') else RealIndv
-    file = args.save
+    file = args.svpath + args.svfile
 
     data_size, train_loader, test_loader = load_data(batch_size=64)
     model = AutoEncoder(data_size, hidden_layer_size, data_size).to(device)
