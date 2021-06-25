@@ -55,7 +55,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='QIEA')
     parser.add_argument('--gen', type=int, default=500, help='The maximal iteration of the algorithm')
     parser.add_argument('--pop', type=int, default=50, help='The population size')
-    parser.add_argument('--hid', type=int, default=500, help='The number of hidden units of an auto-encoder')
+    parser.add_argument('--hid', type=int, default=300, help='The number of hidden units of an auto-encoder')
     parser.add_argument('--indv', type=str, default="real", help='Type of individual encoding. Values: \"real\", \"bin\"')
     parser.add_argument('--save', type=str, default='./alldata/alldata_' + str(pid) + '.pkl')
 
