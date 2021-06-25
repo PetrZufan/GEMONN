@@ -1,15 +1,15 @@
 
-from qiea.population import *
+from ea.population import *
 from alldata import AllData
 import copy
 
 
-class QIEA:
-    def __init__(self, population, children_size):
+class EA:
+    def __init__(self, population, children_count):
         self.population = population
         self.pop_size = population.pop_size
-        self.children_size = children_size
         self.all_data = AllData()
+        self.children_count = children_count
 
 #    def __init__(self, pop_size, chromosome_len):
 #        self.population = Population(pop_size, chromosome_len).generate_pop()
@@ -24,9 +24,6 @@ class QIEA:
             # Print some statistics
             #if i % 10 == 0:
             print('Best Fitness:', round(best_fitness, 5))
-
-            # Quantum Rotation Gate
-            self.rotation(best_individual, generation)
 
             # Mutation
             self.mutation()
@@ -44,8 +41,5 @@ class QIEA:
                 self.all_data.to_file(all_data_file)
         return best_individual, self.all_data
 
-    def rotation(self, best_individual, generation):
-        self.population.rotation(best_individual, generation)
-
-    def mutation(self, ratio=0.05):
-        self.population.mutation(ratio)
+    def mutation(self, coef=0.1):
+        self.population.mutation(coef, self.children_count)

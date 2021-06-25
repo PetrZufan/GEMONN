@@ -6,10 +6,14 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
-from qiea.population import *
-from qiea.qiea import *
+from qiea.population import Population as QPopulation
+from qiea.qiea import QIEA
 from qiea.individual.real import Individual as RealIndv
 from qiea.individual.binary import Individual as BinIndv
+
+from ea.population import Population as CPopulation
+from ea.ea import EA
+from ea.individual.real import Individual as ClasicIndv
 
 from autoencoder import *
 
@@ -54,9 +58,10 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='QIEA')
     parser.add_argument('--gen', type=int, default=500, help='The maximal iteration of the algorithm')
-    parser.add_argument('--pop', type=int, default=50, help='The population size')
+    parser.add_argument('--pop', type=int, default=4, help='The population size')
+    parser.add_argument('--child', type=int, default=8, help='The children count')
     parser.add_argument('--hid', type=int, default=300, help='The number of hidden units of an auto-encoder')
-    parser.add_argument('--indv', type=str, default="real", help='Type of individual encoding. Values: \"real\", \"bin\"')
+    parser.add_argument('--indv', type=str, default="real", help='Type of individual encoding. Values: real, bin, clasic')
     parser.add_argument('--svpath', type=str, default='./alldata/')
     parser.add_argument('--svfile', type=str, default='alldata_' + str(pid) + '.pkl')
 
@@ -64,16 +69,28 @@ if __name__ == '__main__':
 
     hidden_layer_size = args.hid
     population_size = args.pop
+    children_size = args.child
     max_generation = args.gen
-    individual_type = BinIndv if (args.indv == 'bin') else RealIndv
+    individual_type = \
+        BinIndv if (args.indv == 'bin') else (
+        RealIndv if (args.indv == 'real') else (
+        ClasicIndv
+    ))
     file = args.svpath + args.svfile
 
     data_size, train_loader, test_loader = load_data(batch_size=64)
     model = AutoEncoder(data_size, hidden_layer_size, data_size).to(device)
     model.set_data(train_loader, data_size)
 
-    population = Population(pop_size=population_size, model=model, individual_type=individual_type)
-    qiea = QIEA(population)
-    best, all_data = qiea.run(max_generation, file)
-    all_data.to_file(file)
+    if individual_type == ClasicIndv:
+        population = CPopulation(pop_size=population_size, model=model, individual_type=individual_type)
+        ea = EA(population, children_size)
+        best, all_data = ea.run(max_generation, file)
+        all_data.to_file(file)
+    else:
+        population = QPopulation(pop_size=population_size, model=model, individual_type=individual_type)
+        qiea = QIEA(population, children_size)
+        best, all_data = qiea.run(max_generation, file)
+        all_data.to_file(file)
+
     # print(best)
