@@ -46,3 +46,42 @@ class AutoEncoder(nn.Module):
             images = images.view(-1, data_size).to(device)
             # labels = labels.to(device)
             return images, self(images)
+
+    def grad_train(self):
+        self.train()
+        loss_fn = nn.MSELoss()
+        optimizer = torch.optim.SGD(self.parameters(), lr=1e-3)
+
+        size = len(self.data_loader.dataset)
+        for batch, (images, _) in enumerate(self.data_loader):
+            #images = images.to(device),
+
+            # Compute prediction error
+            images = images.view(-1, self.data_size).to(device)
+            pred, _ = self(images)
+            loss = loss_fn(pred, images)
+
+            # Backpropagation
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            if batch % 100 == 0:
+                loss, current = loss.item(), batch * len(images)
+                print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+
+    def test(self):
+        loss_fn = nn.MSELoss()
+
+        size = len(self.data_loader.dataset)
+        num_batches = len(self.data_loader)
+        self.eval()
+        test_loss, correct = 0, 0
+        with torch.no_grad():
+            for images, _ in self.data_loader:
+                X = images.view(-1, self.data_size).to(device)
+                y = X
+                pred, _ = self(X)
+                test_loss += loss_fn(pred, y).item()
+        test_loss /= num_batches
+        print(f"Test Error: \n Avg loss: {test_loss:>8f} \n")

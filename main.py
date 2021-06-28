@@ -6,6 +6,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
+from alldata import AllData
 from qiea.population import Population as QPopulation
 from qiea.qiea import QIEA
 from qiea.individual.real import Individual as RealIndv
@@ -61,7 +62,8 @@ if __name__ == '__main__':
     parser.add_argument('--pop', type=int, default=4, help='The population size')
     parser.add_argument('--child', type=int, default=8, help='The children count')
     parser.add_argument('--hid', type=int, default=300, help='The number of hidden units of an auto-encoder')
-    parser.add_argument('--indv', type=str, default="real", help='Type of individual encoding. Values: real, bin, classic')
+    parser.add_argument('--alg', type=str, default="ea", help='The algorithm used. Values: ea, grad.')
+    parser.add_argument('--indv', type=str, default="real", help='Type of individual encoding. Values: real, bin, classic.')
     parser.add_argument('--svpath', type=str, default='./alldata/')
     parser.add_argument('--svfile', type=str, default='alldata_' + str(pid))
 
@@ -82,18 +84,29 @@ if __name__ == '__main__':
     model = AutoEncoder(data_size, hidden_layer_size, data_size).to(device)
     model.set_data(train_loader, data_size)
 
-    if individual_type == ClassicIndv:
+    if args.alg == "grad":
+        epochs = max_generation / (data_size/64)
+        for t in range(epochs):
+            print(f"Epoch {t + 1}\n-------------------------------")
+            model.grad_train()
+            model.test()
+        print("Done!")
+
+
+    elif individual_type == ClassicIndv:
         population = CPopulation(pop_size=population_size, model=model, individual_type=individual_type)
         ea = EA(population, children_size)
         best, all_data = ea.run(max_generation, file)
         #all_data.to_file(file)
+        all_data.fitness_to_file(file + '.txt')
     else:
         population = QPopulation(pop_size=population_size, model=model, individual_type=individual_type)
         qiea = QIEA(population, children_size)
         best, all_data = qiea.run(max_generation, file)
         #all_data.to_file(file)
+        all_data.fitness_to_file(file + '.txt')
 
-    all_data.fitness_to_file(file + '.txt')
+
     #stats = Stats(all_data)
     #stats.conv(file + '.png', "title", xlim=10)
 
